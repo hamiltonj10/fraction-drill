@@ -120,7 +120,8 @@ const session = {
     incorrect: 0,
     streak: 0,
 	bestStreak: 0,
-    history: []
+    history: [],
+	questionResults: []
 };
 
 let currentFraction1 = null;
@@ -175,6 +176,51 @@ function doOperation(op, a, b) {
     }
 }
 
+// Progress Bar
+function updateProgressBar() {
+    const container =
+        document.getElementById(
+            "progressBar"
+        );
+
+    container.innerHTML = "";
+
+    for (
+        let i = 0;
+        i < session.totalProblems;
+        i++
+    ) {
+        const segment =
+            document.createElement("div");
+
+        segment.classList.add(
+            "progress-segment"
+        );
+
+        if (
+            session.questionResults[i]
+            === true
+        ) {
+            segment.classList.add(
+                "correct"
+            );
+        }
+
+        if (
+            session.questionResults[i]
+            === false
+        ) {
+            segment.classList.add(
+                "incorrect"
+            );
+        }
+
+        container.appendChild(
+            segment
+        );
+    }
+}
+
 // =====================================================
 // Dashboard
 // =====================================================
@@ -211,6 +257,8 @@ function updateDashboard() {
         "streakValue"
     ).textContent =
         session.streak;
+
+	updateProgressBar();
 }
 
 // =====================================================
@@ -400,6 +448,10 @@ function submitAnswer() {
             userFraction.equals(
                 currentAnswer
             );
+		
+		session.questionResults.push(
+    		isCorrect
+		);
 
         if (isCorrect) {
             session.correct++;
@@ -448,6 +500,10 @@ function submitAnswer() {
 
             updateDashboard();
 
+			document.getElementById(
+    			"progressBar"
+			).style.width = "100%";
+
             document.getElementById(
                 "questionText"
             ).innerHTML =
@@ -483,8 +539,9 @@ function resetSession() {
     session.correct = 0;
     session.incorrect = 0;
     session.streak = 0;
-	session.bestStreak = 0;
+    session.bestStreak = 0;
     session.history = [];
+    session.questionResults = [];
 
     document.getElementById(
         "sessionHistory"
@@ -502,6 +559,7 @@ function resetSession() {
         "submitBtn"
     ).disabled = false;
 
+    updateProgressBar();
     updateDashboard();
     generateProblem();
 }
