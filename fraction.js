@@ -204,6 +204,9 @@ function updateProgressBar() {
             segment.classList.add(
                 "correct"
             );
+
+            segment.title =
+                `Question ${i + 1}: Correct`;
         }
 
         if (
@@ -213,6 +216,17 @@ function updateProgressBar() {
             segment.classList.add(
                 "incorrect"
             );
+
+            segment.title =
+                `Question ${i + 1}: Incorrect`;
+        }
+
+        if (
+            session.questionResults[i]
+            === undefined
+        ) {
+            segment.title =
+                `Question ${i + 1}: Not Answered`;
         }
 
         container.appendChild(

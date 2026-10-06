@@ -136,16 +136,56 @@ button {
 
 .progress-segment {
     flex: 1;
-    height: 20px;
+    height: 24px;
     background: #d9d9d9;
     border-radius: 4px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
+    border: 1px solid #c7c7c7;
 }
 
 .progress-segment.correct {
     background: #4caf50;
+    border-color: #388e3c;
 }
 
 .progress-segment.incorrect {
     background: #f44336;
+    border-color: #d32f2f;
+}
+
+/* =====================================
+   Progress Legend
+   ===================================== */
+
+.progress-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.legend-color.correct {
+    background: #4caf50;
+}
+
+.legend-color.incorrect {
+    background: #f44336;
+}
+
+.legend-color.unanswered {
+    background: #d9d9d9;
 }
