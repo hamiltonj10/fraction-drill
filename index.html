@@ -48,27 +48,188 @@
             id="progressBar"
             class="progress-segments"
         ></div>
-    	<div class="question-box">
-        	<h2 id="questionText">
-            	Click Start
-        	</h2>
-        	<input
-            	id="answerInput"
-            	type="text"
-            	placeholder="Example: 3/4"
-        	>
-        	<br>
-        	<button id="submitBtn">
-            	Submit Answer
-        	</button>
-        	<button id="startBtn">
-            	Start Session
-        	</button>
-        	<button id="resetBtn">
-            	Reset Session
-        	</button>
-        	<p id="feedback"></p>
-    	</div>
+<!-- Settings Panel-->
+		<div class="settings-panel">
+
+			<h3>Practice Settings</h3>
+
+			<div id="settingsContent">
+
+				<!-- Difficulty -->
+				<div class="settings-section">
+
+					<h4>Difficulty</h4>
+
+					<div class="setting-row">
+
+						<label for="difficultySelect">
+							Level
+						</label>
+
+						<select id="difficultySelect">
+
+							<option value="easy">
+								Easy
+							</option>
+
+							<option
+								value="medium"
+								selected
+							>
+								Medium
+							</option>
+
+							<option value="hard">
+								Hard
+							</option>
+
+							<option value="adaptive">
+								Adaptive
+							</option>
+
+						</select>
+
+					</div>
+
+				</div>
+
+				<!-- Session Length -->
+				<div class="settings-section">
+
+					<h4>Session Length</h4>
+
+					<div class="setting-row">
+
+						<label for="questionCount">
+							Questions
+						</label>
+
+						<input
+							id="questionCount"
+							type="number"
+							min="1"
+							max="50"
+							step="1"
+							value="10"
+						>
+
+					</div>
+
+					<small class="setting-help">
+						Choose between 1 and 50 questions.
+					</small>
+
+				</div>
+
+				<!-- Operations -->
+				<div class="settings-section">
+
+					<h4>Operations</h4>
+
+					<div class="operation-selector">
+
+						<label>
+							<input
+								type="checkbox"
+								id="opAdd"
+								checked
+							>
+							Addition
+						</label>
+
+						<label>
+							<input
+								type="checkbox"
+								id="opSubtract"
+								checked
+							>
+							Subtraction
+						</label>
+
+						<label>
+							<input
+								type="checkbox"
+								id="opMultiply"
+								checked
+							>
+							Multiplication
+						</label>
+
+						<label>
+							<input
+								type="checkbox"
+								id="opDivide"
+								checked
+							>
+							Division
+						</label>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<!-- Action Buttons -->
+			<div class="settings-actions">
+
+				<button id="startBtn">
+					Start Session
+				</button>
+
+			</div>
+
+			<!-- Session Summary -->
+			<div class="settings-summary">
+
+				<div id="settingsSummary">
+
+					<div class="summary-title">
+						Current Session
+					</div>
+
+					<div id="settingsSummaryText">
+						Medium • 10 Questions • All Operations
+					</div>
+				</div>
+
+</div>
+
+			</div>
+
+		</div>
+</div>
+
+		</div>
+
+    	<div
+			id="questionArea"
+			class="question-box"
+		>
+
+			<h2 id="questionText">
+				Click Start
+			</h2>
+
+			<input
+				id="answerInput"
+				type="text"
+				placeholder="Example: 3/4"
+			>
+
+			<br>
+
+			<button id="submitBtn">
+				Submit Answer
+			</button>
+
+			<button id="resetBtn">
+				Reset Session
+			</button>
+
+			<p id="feedback"></p>
+
+		</div>
     	<div class="history">
         	<h3>Session History</h3>
         	<div id="sessionHistory"></div>

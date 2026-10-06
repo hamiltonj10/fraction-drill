@@ -121,7 +121,9 @@ const session = {
     streak: 0,
 	bestStreak: 0,
     history: [],
-	questionResults: []
+	questionResults: [],
+    operations: [],
+    difficulty: "medium"
 };
 
 let currentFraction1 = null;
@@ -235,6 +237,128 @@ function updateProgressBar() {
     }
 }
 
+// Preview Update
+function updateQuestionCountPreview() {
+
+    const count =
+        Number(
+            document.getElementById(
+                "questionCount"
+            ).value
+        ) || 0;
+
+    document.getElementById(
+        "problemCounter"
+    ).textContent =
+        `0 / ${count}`;
+
+    const container =
+        document.getElementById(
+            "progressBar"
+        );
+
+    container.innerHTML = "";
+
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
+        const segment =
+            document.createElement("div");
+
+        segment.classList.add(
+            "progress-segment"
+        );
+
+        container.appendChild(
+            segment
+        );
+    }
+}
+
+//Update settings summary
+function updateSettingsSummary() {
+
+    const difficulty =
+        document.getElementById(
+            "difficultySelect"
+        ).value;
+
+    const questionCount =
+        document.getElementById(
+            "questionCount"
+        ).value;
+
+    const operations = [];
+
+    if (
+        document.getElementById(
+            "opAdd"
+        ).checked
+    ) {
+        operations.push(
+            "Addition"
+        );
+    }
+
+    if (
+        document.getElementById(
+            "opSubtract"
+        ).checked
+    ) {
+        operations.push(
+            "Subtraction"
+        );
+    }
+
+    if (
+        document.getElementById(
+            "opMultiply"
+        ).checked
+    ) {
+        operations.push(
+            "Multiplication"
+        );
+    }
+
+    if (
+        document.getElementById(
+            "opDivide"
+        ).checked
+    ) {
+        operations.push(
+            "Division"
+        );
+    }
+
+    let operationText =
+        "No Operations";
+
+    if (
+        operations.length === 4
+    ) {
+        operationText =
+            "All Operations";
+    }
+    else if (
+        operations.length > 0
+    ) {
+        operationText =
+            operations.join(", ");
+    }
+
+    const displayDifficulty =
+        difficulty.charAt(0)
+            .toUpperCase() +
+        difficulty.slice(1);
+
+    document.getElementById(
+        "settingsSummaryText"
+    ).textContent =
+        `${displayDifficulty} • ${questionCount} Questions • ${operationText}`;
+    }
+
 // =====================================================
 // Dashboard
 // =====================================================
@@ -335,7 +459,6 @@ function generateProblem() {
     ).innerHTML = html;
 
 	document.getElementById("questionText").innerHTML = html;
-	console.log(html);
 }
 
 // =====================================================
@@ -439,6 +562,13 @@ function buildSessionSummary() {
             </p>
 
             <h3>Great Job!</h3>
+
+            <button
+                id="newSessionBtn"
+                class="summary-button"
+            >
+                Start New Session
+            </button>
         </div>
     `;
 }
@@ -524,6 +654,23 @@ function submitAnswer() {
                 buildSessionSummary();
 
             document.getElementById(
+                "answerInput"
+            ).style.display =
+                "none";
+
+            document.getElementById(
+                "submitBtn"
+            ).style.display =
+                "none";
+
+            document.getElementById(
+                "newSessionBtn"
+            ).addEventListener(
+                "click",
+                resetToStartScreen
+            );
+
+            document.getElementById(
                 "feedback"
             ).textContent +=
                 ` Final Score: ${session.correct}/${session.totalProblems}`;
@@ -531,6 +678,14 @@ function submitAnswer() {
             document.getElementById(
                 "submitBtn"
             ).disabled = true;
+
+            document.getElementById(
+                "difficultySelect"
+            ).disabled = false;
+
+            document.getElementById(
+                "questionCount"
+            ).disabled = false;
 
             return;
         }
@@ -545,10 +700,102 @@ function submitAnswer() {
     }
 }
 
+// Start Session
+function startSession() {
+
+    session.difficulty =
+        document.getElementById(
+            "difficultySelect"
+        ).value;
+    
+    const problemCount =
+        Number(
+            document.getElementById(
+                "questionCount"
+            ).value
+        );
+
+    if (
+        !Number.isInteger(problemCount) ||
+        problemCount < 1 ||
+        problemCount > 50
+    ) {
+        alert(
+            "Please enter between 1 and 50 questions."
+        );
+        return;
+    }
+
+session.totalProblems =
+    problemCount;
+
+    document.getElementById(
+        "difficultySelect"
+    ).disabled = true;
+
+    document.getElementById(
+        "settingsContent"
+    ).style.display =
+        "none";
+    
+    document.getElementById(
+        "questionArea"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "startBtn"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "questionCount"
+    ).disabled = true;
+
+    document.getElementById(
+        "answerInput"
+    ).disabled = false;
+
+    document.getElementById(
+        "submitBtn"
+    ).disabled = false;
+
+    document.getElementById(
+        "answerInput"
+    ).style.display =
+        "inline-block";
+
+    document.getElementById(
+        "submitBtn"
+    ).style.display =
+        "inline-block";
+
+    session.currentProblem = 1;
+    session.correct = 0;
+    session.incorrect = 0;
+    session.streak = 0;
+    session.bestStreak = 0;
+    session.history = [];
+    session.questionResults = [];
+
+    document.getElementById(
+        "sessionHistory"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "feedback"
+    ).textContent = "";
+
+    updateProgressBar();
+    updateDashboard();
+    generateProblem();
+}
+
 // =====================================================
 // Reset Session
 // =====================================================
-function resetSession() {
+function resetToStartScreen() {
+
     session.currentProblem = 1;
     session.correct = 0;
     session.incorrect = 0;
@@ -570,12 +817,43 @@ function resetSession() {
     ).value = "";
 
     document.getElementById(
+        "questionText"
+    ).textContent =
+        "Click Start";
+
+    document.getElementById(
+        "answerInput"
+    ).disabled = true;
+
+    document.getElementById(
         "submitBtn"
+    ).disabled = true;
+
+    document.getElementById(
+        "difficultySelect"
     ).disabled = false;
+
+    document.getElementById(
+        "questionCount"
+    ).disabled = false;
+
+    document.getElementById(
+        "settingsContent"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "startBtn"
+    ).style.display =
+        "inline-block";
+
+    document.getElementById(
+        "questionArea"
+    ).style.display =
+        "none";
 
     updateProgressBar();
     updateDashboard();
-    generateProblem();
 }
 
 // =====================================================
@@ -585,14 +863,14 @@ document
     .getElementById("startBtn")
     .addEventListener(
         "click",
-        resetSession
+        startSession
     );
 
 document
     .getElementById("resetBtn")
     .addEventListener(
         "click",
-        resetSession
+        resetToStartScreen
     );
 
 document
@@ -601,6 +879,25 @@ document
         "click",
         submitAnswer
     );
+
+document
+    .getElementById(
+        "questionCount"
+    )
+    .addEventListener(
+        "input",
+        updateQuestionCountPreview
+    );
+
+
+document
+.getElementById(
+    "difficultySelect"
+)
+.addEventListener(
+    "change",
+    updateSettingsSummary
+);
 
 // Allow Enter key submission
 document
@@ -614,5 +911,82 @@ document
         }
     );
 
+document
+    .getElementById(
+        "questionCount"
+    )
+    .addEventListener(
+        "input",
+        () => {
+
+            const input =
+                document.getElementById(
+                    "questionCount"
+                );
+
+            let value =
+                Number(input.value);
+
+            if (value < 1) {
+                value = 1;
+            }
+
+            if (value > 50) {
+                value = 50;
+            }
+
+            input.value = value;
+
+            updateQuestionCountPreview();
+            updateSettingsSummary();
+        }
+    );
+
+document
+    .getElementById(
+        "opAdd"
+    )
+    .addEventListener(
+        "change",
+        updateSettingsSummary
+    );
+
+document
+    .getElementById(
+        "opSubtract"
+    )
+    .addEventListener(
+        "change",
+        updateSettingsSummary
+    );
+
+document
+    .getElementById(
+        "opMultiply"
+    )
+    .addEventListener(
+        "change",
+        updateSettingsSummary
+    );
+
+document
+    .getElementById(
+        "opDivide"
+    )
+    .addEventListener(
+        "change",
+        updateSettingsSummary
+    );
+
 // Initialize dashboard
 updateDashboard();
+updateQuestionCountPreview();
+updateSettingsSummary();
+
+document.getElementById(
+    "answerInput"
+).disabled = true;
+
+document.getElementById(
+    "submitBtn"
+).disabled = true;
