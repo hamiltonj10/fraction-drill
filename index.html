@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fraction Practice Drill</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="container">
+    	<h1>Fraction Practice Drill</h1>
+    	<div class="dashboard">
+        	<div class="stat">
+            	<label>Problem</label>
+            	<div id="problemCounter">0 / 0</div>
+        	</div>
+        	<div class="stat">
+            	<label>Score</label>
+            	<div id="scoreValue">0</div>
+        	</div>
+        	<div class="stat">
+            	<label>Accuracy</label>
+            	<div id="accuracyValue">0%</div>
+        	</div>
+        	<div class="stat">
+            	<label>Current Streak</label>
+            	<div id="streakValue">0</div>
+        	</div>
+    	</div>
+    	<div class="question-box">
+        	<h2 id="questionText">
+            	Click Start
+        	</h2>
+        	<input
+            	id="answerInput"
+            	type="text"
+            	placeholder="Example: 3/4"
+        	>
+        	<br>
+        	<button id="submitBtn">
+            	Submit Answer
+        	</button>
+        	<button id="startBtn">
+            	Start Session
+        	</button>
+        	<button id="resetBtn">
+            	Reset Session
+        	</button>
+        	<p id="feedback"></p>
+    	</div>
+    	<div class="history">
+        	<h3>Session History</h3>
+        	<div id="sessionHistory"></div>
+    	</div>
+	</div>
+	<script src="fraction.js"></script>
+</body>
+</html>
