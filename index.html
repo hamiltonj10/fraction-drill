@@ -49,158 +49,191 @@
             class="progress-segments"
         ></div>
 <!-- Settings Panel-->
-		<div class="settings-panel">
+	<div class="settings-panel">
 
-			<h3>Practice Settings</h3>
+		<h3>Practice Settings</h3>
 
-			<div id="settingsContent">
+		<div id="settingsContent">
 
-				<!-- Difficulty -->
-				<div class="settings-section">
+			<!-- Difficulty -->
+			<div class="settings-section">
 
-					<h4>Difficulty</h4>
+				<h4>Difficulty</h4>
 
-					<div class="setting-row">
+				<div class="setting-row">
 
-						<label for="difficultySelect">
-							Level
-						</label>
+					<label for="difficultySelect">
+						Level
+					</label>
 
-						<select id="difficultySelect">
+					<select id="difficultySelect">
 
-							<option value="easy">
-								Easy
-							</option>
+						<option value="easy">
+							Easy
+						</option>
 
-							<option
-								value="medium"
-								selected
-							>
-								Medium
-							</option>
-
-							<option value="hard">
-								Hard
-							</option>
-
-							<option value="adaptive">
-								Adaptive
-							</option>
-
-						</select>
-
-					</div>
-
-				</div>
-
-				<!-- Session Length -->
-				<div class="settings-section">
-
-					<h4>Session Length</h4>
-
-					<div class="setting-row">
-
-						<label for="questionCount">
-							Questions
-						</label>
-
-						<input
-							id="questionCount"
-							type="number"
-							min="1"
-							max="50"
-							step="1"
-							value="10"
+						<option
+							value="medium"
+							selected
 						>
+							Medium
+						</option>
 
-					</div>
+						<option value="hard">
+							Hard
+						</option>
 
-					<small class="setting-help">
-						Choose between 1 and 50 questions.
-					</small>
+						<option value="adaptive">
+							Adaptive
+						</option>
 
-				</div>
+						<option value="custom">
+							Custom
+						</option>
 
-				<!-- Operations -->
-				<div class="settings-section">
-
-					<h4>Operations</h4>
-
-					<div class="operation-selector">
-
-						<label>
-							<input
-								type="checkbox"
-								id="opAdd"
-								checked
-							>
-							Addition
-						</label>
-
-						<label>
-							<input
-								type="checkbox"
-								id="opSubtract"
-								checked
-							>
-							Subtraction
-						</label>
-
-						<label>
-							<input
-								type="checkbox"
-								id="opMultiply"
-								checked
-							>
-							Multiplication
-						</label>
-
-						<label>
-							<input
-								type="checkbox"
-								id="opDivide"
-								checked
-							>
-							Division
-						</label>
-
-					</div>
+					</select>
 
 				</div>
 
 			</div>
 
-			<!-- Action Buttons -->
-			<div class="settings-actions">
+			<!-- Session Length -->
+			<div class="settings-section">
 
-				<button id="startBtn">
-					Start Session
-				</button>
+				<h4>Session Length</h4>
+
+				<div class="setting-row">
+
+					<label for="questionCount">
+						Questions
+					</label>
+
+					<input
+						id="questionCount"
+						type="number"
+						min="1"
+						max="50"
+						step="1"
+						value="10"
+					>
+
+				</div>
+
+				<small class="setting-help">
+					Choose between 1 and 50 questions.
+				</small>
 
 			</div>
 
-			<!-- Session Summary -->
-			<div class="settings-summary">
+			<!-- Operations -->
+			<div 
+				id="operationsSection"
+				class="settings-section"
+			>
 
-				<div id="settingsSummary">
+				<h4>Operations</h4>
 
-					<div class="summary-title">
-						Current Session
-					</div>
+				<div class="operation-selector">
 
-					<div id="settingsSummaryText">
-						Medium • 10 Questions • All Operations
-					</div>
+					<label>
+						<input
+							type="checkbox"
+							id="opAdd"
+							checked
+						>
+						Addition
+					</label>
+
+					<label>
+						<input
+							type="checkbox"
+							id="opSubtract"
+							checked
+						>
+						Subtraction
+					</label>
+
+					<label>
+						<input
+							type="checkbox"
+							id="opMultiply"
+							checked
+						>
+						Multiplication
+					</label>
+
+					<label>
+						<input
+							type="checkbox"
+							id="opDivide"
+							checked
+						>
+						Division
+					</label>
+
 				</div>
 
-</div>
+			</div>
+
+			<!-- Custom Settings -->
+			<div
+				id="customSettings"
+				class="settings-section"
+				style="display:none;"
+			>
+
+				<h4>Custom Settings</h4>
+
+				<div class="setting-row">
+
+					<label for="maxTerms">
+						Max Terms
+					</label>
+
+					<input
+						id="maxTerms"
+						type="number"
+						min="2"
+						max="10"
+						step="1"
+						value="2"
+					>
+
+				</div>
+
+				<small class="setting-help">
+					Maximum number of fractions per problem.
+				</small>
 
 			</div>
 
 		</div>
-</div>
+
+		<!-- Action Buttons -->
+		<div class="settings-actions">
+
+			<button id="startBtn">
+				Start Session
+			</button>
 
 		</div>
+
+		<!-- Session Preview -->
+		<div class="settings-summary">
+
+			<div class="summary-title">
+				Current Session
+			</div>
+
+			<div id="settingsSummaryText">
+				Medium • 10 Questions • All Operations
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
 
     	<div
 			id="questionArea"

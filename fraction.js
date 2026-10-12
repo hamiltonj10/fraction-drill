@@ -123,36 +123,47 @@ const session = {
     history: [],
 	questionResults: [],
     operations: [],
-    difficulty: "medium"
+    difficulty: "medium",
+    maxFractionValue: 20,
+    maxTerms: 2,
 };
 
-let currentFraction1 = null;
-let currentFraction2 = null;
-let currentOperation = null;
+let currentFractions = [];
+let currentOperations = [];
 let currentAnswer = null;
 
 // =====================================================
 // Fraction Helpers
 // =====================================================
 function randomFraction() {
+
     return new Fraction(
-        Math.floor(Math.random() * 10) + 1,
-        Math.floor(Math.random() * 10) + 1
+
+        Math.floor(
+            Math.random() *
+            session.maxFractionValue
+        ) + 1,
+
+        Math.floor(
+            Math.random() *
+            session.maxFractionValue
+        ) + 1
+
     );
 }
 
 function randomOperation() {
-    const choices = [
-        "+",
-        "-",
-        "*",
-        "/"
-    ];
 
-    return choices[
+    if (
+        session.operations.length === 0
+    ) {
+        return "+";
+    }
+
+    return session.operations[
         Math.floor(
             Math.random() *
-            choices.length
+            session.operations.length
         )
     ];
 }
@@ -176,6 +187,31 @@ function doOperation(op, a, b) {
                 "Unknown operation"
             );
     }
+}
+
+function evaluateExpression(
+    fractions,
+    operations
+) {
+
+    let result =
+        fractions[0];
+
+    for (
+        let i = 0;
+        i < operations.length;
+        i++
+    ) {
+
+        result =
+            doOperation(
+                operations[i],
+                result,
+                fractions[i + 1]
+            );
+    }
+
+    return result;
 }
 
 // Progress Bar
@@ -290,74 +326,98 @@ function updateSettingsSummary() {
             "questionCount"
         ).value;
 
-    const operations = [];
+    let summaryText = "";
 
-    if (
-        document.getElementById(
-            "opAdd"
-        ).checked
-    ) {
-        operations.push(
-            "Addition"
-        );
+    switch (difficulty) {
+
+        case "easy":
+
+            summaryText =
+                `Easy • ${questionCount} Questions • 2 Terms • Addition, Subtraction`;
+
+            break;
+
+        case "medium":
+
+            summaryText =
+                `Medium • ${questionCount} Questions • Up To 3 Terms • Addition, Subtraction, Multiplication`;
+
+            break;
+
+        case "hard":
+
+            summaryText =
+                `Hard • ${questionCount} Questions • Up To 5 Terms • All Operations`;
+
+            break;
+
+        case "adaptive":
+
+            summaryText =
+                `Adaptive • ${questionCount} Questions • Dynamic Difficulty`;
+
+            break;
+
+        case "custom":
+
+            const operations = [];
+
+            if (
+                document.getElementById(
+                    "opAdd"
+                ).checked
+            ) {
+                operations.push(
+                    "Addition"
+                );
+            }
+
+            if (
+                document.getElementById(
+                    "opSubtract"
+                ).checked
+            ) {
+                operations.push(
+                    "Subtraction"
+                );
+            }
+
+            if (
+                document.getElementById(
+                    "opMultiply"
+                ).checked
+            ) {
+                operations.push(
+                    "Multiplication"
+                );
+            }
+
+            if (
+                document.getElementById(
+                    "opDivide"
+                ).checked
+            ) {
+                operations.push(
+                    "Division"
+                );
+            }
+
+            const maxTerms =
+                document.getElementById(
+                    "maxTerms"
+                ).value;
+
+            summaryText =
+                `Custom • ${questionCount} Questions • Up To ${maxTerms} Terms • ${operations.join(", ")}`;
+
+            break;
     }
-
-    if (
-        document.getElementById(
-            "opSubtract"
-        ).checked
-    ) {
-        operations.push(
-            "Subtraction"
-        );
-    }
-
-    if (
-        document.getElementById(
-            "opMultiply"
-        ).checked
-    ) {
-        operations.push(
-            "Multiplication"
-        );
-    }
-
-    if (
-        document.getElementById(
-            "opDivide"
-        ).checked
-    ) {
-        operations.push(
-            "Division"
-        );
-    }
-
-    let operationText =
-        "No Operations";
-
-    if (
-        operations.length === 4
-    ) {
-        operationText =
-            "All Operations";
-    }
-    else if (
-        operations.length > 0
-    ) {
-        operationText =
-            operations.join(", ");
-    }
-
-    const displayDifficulty =
-        difficulty.charAt(0)
-            .toUpperCase() +
-        difficulty.slice(1);
 
     document.getElementById(
         "settingsSummaryText"
     ).textContent =
-        `${displayDifficulty} • ${questionCount} Questions • ${operationText}`;
-    }
+        summaryText;
+}
 
 // =====================================================
 // Dashboard
@@ -431,34 +491,99 @@ function addHistory(message, correct) {
 // Problem Generation
 // =====================================================
 function generateProblem() {
-    currentFraction1 =
-        randomFraction();
 
-    currentFraction2 =
-        randomFraction();
+    currentFractions = [];
+    currentOperations = [];
 
-    currentOperation =
-        randomOperation();
+    let termCount = 2;
 
-    currentAnswer =
-        doOperation(
-            currentOperation,
-            currentFraction1,
-            currentFraction2
+    switch (
+        session.difficulty
+    ) {
+
+        case "easy":
+            termCount = 2;
+            break;
+
+        case "medium":
+            termCount =
+                Math.floor(
+                    Math.random() * 2
+                ) + 2;
+            break;
+
+        case "hard":
+            termCount =
+                Math.floor(
+                    Math.random() * 3
+                ) + 3;
+            break;
+
+        case "adaptive":
+            termCount = 2;
+            break;
+
+        case "custom":
+            termCount =
+                Math.floor(
+                    Math.random() *
+                    (
+                        session.maxTerms - 1
+                    )
+                ) + 2;
+            break;
+    }
+
+    for (
+        let i = 0;
+        i < termCount;
+        i++
+    ) {
+
+        currentFractions.push(
+            randomFraction()
         );
 
-    const html =
-        fractionHTML(currentFraction1) +
-        '<span class="operator">' +
-        currentOperation +
-        '</span>' +
-        fractionHTML(currentFraction2);
+        if (
+            i < termCount - 1
+        ) {
+            currentOperations.push(
+                randomOperation()
+            );
+        }
+    }
+
+    currentAnswer =
+        evaluateExpression(
+            currentFractions,
+            currentOperations
+        );
+
+    let html =
+        fractionHTML(
+            currentFractions[0]
+        );
+
+    for (
+        let i = 0;
+        i < currentOperations.length;
+        i++
+    ) {
+
+        html +=
+            '<span class="operator">' +
+            currentOperations[i] +
+            '</span>' +
+            fractionHTML(
+                currentFractions[
+                    i + 1
+                ]
+            );
+    }
 
     document.getElementById(
         "questionText"
     ).innerHTML = html;
-
-	document.getElementById("questionText").innerHTML = html;
 }
 
 // =====================================================
@@ -623,8 +748,25 @@ function submitAnswer() {
                 `Incorrect. Answer: ${currentAnswer}`;
         }
 
+       let expression =
+            currentFractions[0]
+                .toString();
+
+        for (
+            let i = 0;
+            i < currentOperations.length;
+            i++
+        ) {
+
+            expression +=
+                ` ${currentOperations[i]} ` +
+                currentFractions[
+                    i + 1
+                ].toString();
+        }
+
         addHistory(
-            `${currentFraction1} ${currentOperation} ${currentFraction2} = ${userInput}`,
+            `${expression} = ${userInput}`,
             isCorrect
         );
 
@@ -662,6 +804,16 @@ function submitAnswer() {
                 "submitBtn"
             ).style.display =
                 "none";
+
+            document.getElementById(
+                "resetBtn"
+            ).style.display =
+                "none";
+
+            document.getElementById(
+                "feedback"
+            ).style.display =
+                "none";                
 
             document.getElementById(
                 "newSessionBtn"
@@ -707,6 +859,8 @@ function startSession() {
         document.getElementById(
             "difficultySelect"
         ).value;
+
+    applyDifficultySettings();
     
     const problemCount =
         Number(
@@ -740,6 +894,26 @@ session.totalProblems =
     
     document.getElementById(
         "questionArea"
+    ).style.display =
+        "block";
+    
+    document.getElementById(
+        "answerInput"
+    ).style.display =
+        "inline-block";
+
+    document.getElementById(
+        "submitBtn"
+    ).style.display =
+        "inline-block";
+
+    document.getElementById(
+        "resetBtn"
+    ).style.display =
+        "inline-block";
+
+    document.getElementById(
+        "feedback"
     ).style.display =
         "block";
 
@@ -852,8 +1026,117 @@ function resetToStartScreen() {
     ).style.display =
         "none";
 
+    document.getElementById(
+        "answerInput"
+    ).style.display =
+        "inline-block";
+
+    document.getElementById(
+        "submitBtn"
+    ).style.display =
+        "inline-block";
+
+    document.getElementById(
+        "resetBtn"
+    ).style.display =
+        "inline-block";
+
+    document.getElementById(
+        "feedback"
+    ).style.display =
+        "block";
+
     updateProgressBar();
     updateDashboard();
+}
+
+// Difficulty Settings
+function applyDifficultySettings() {
+
+    switch (
+        session.difficulty
+    ) {
+
+        case "easy":
+
+            session.maxFractionValue = 10;
+            session.maxTerms = 2;
+
+            session.operations =
+                ["+", "-"];
+
+            break;
+
+        case "medium":
+
+            session.maxFractionValue = 20;
+            session.maxTerms = 3;
+
+            session.operations =
+                ["+", "-", "*"];
+
+            break;
+
+        case "hard":
+
+            session.maxFractionValue = 50;
+            session.maxTerms = 5;
+
+            session.operations =
+                ["+", "-", "*", "/"];
+
+            break;
+
+        case "adaptive":
+
+            session.maxFractionValue =
+                20;
+
+            session.maxTerms =
+                2;
+
+            break;
+        
+        case "custom":
+
+            session.maxFractionValue =
+                50;
+
+            session.maxTerms =
+                Number(
+                    document.getElementById(
+                        "maxTerms"
+                    ).value
+                );
+
+            break;
+    }
+}
+
+// Difficulty Visibility
+function updateDifficultyVisibility() {
+
+    const difficulty =
+        document.getElementById(
+            "difficultySelect"
+        ).value;
+
+    const isCustom =
+        difficulty === "custom";
+
+    document.getElementById(
+        "customSettings"
+    ).style.display =
+        isCustom
+            ? "block"
+            : "none";
+
+    document.getElementById(
+        "operationsSection"
+    ).style.display =
+        isCustom
+            ? "block"
+            : "none";
 }
 
 // =====================================================
@@ -978,10 +1261,32 @@ document
         updateSettingsSummary
     );
 
+document
+    .getElementById(
+        "difficultySelect"
+    )
+    .addEventListener(
+        "change",
+        () => {
+            updateDifficultyVisibility();
+            updateSettingsSummary();
+        }
+    );
+
+document
+    .getElementById(
+        "maxTerms"
+    )
+    .addEventListener(
+        "input",
+        updateSettingsSummary
+    );
+
 // Initialize dashboard
 updateDashboard();
 updateQuestionCountPreview();
 updateSettingsSummary();
+updateDifficultyVisibility();
 
 document.getElementById(
     "answerInput"
