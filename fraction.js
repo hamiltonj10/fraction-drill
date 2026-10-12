@@ -126,6 +126,7 @@ const session = {
     difficulty: "medium",
     maxFractionValue: 20,
     maxTerms: 2,
+    skillRating: 50
 };
 
 let currentFractions = [];
@@ -417,6 +418,46 @@ function updateSettingsSummary() {
         "settingsSummaryText"
     ).textContent =
         summaryText;
+}
+
+function updateAdaptiveStatus() {
+
+    const status =
+        document.getElementById(
+            "adaptiveStatus"
+        );
+
+    if (
+        session.difficulty !==
+        "adaptive"
+    ) {
+        status.textContent = "";
+        return;
+    }
+
+    let level = "Medium";
+
+    if (
+        session.skillRating <= 25
+    ) {
+        level = "Easy";
+    }
+    else if (
+        session.skillRating <= 50
+    ) {
+        level = "Medium";
+    }
+    else if (
+        session.skillRating <= 75
+    ) {
+        level = "Hard";
+    }
+    else {
+        level = "Expert";
+    }
+
+    status.textContent =
+        `Adaptive Rating: ${session.skillRating} (${level})`;
 }
 
 // =====================================================
@@ -726,12 +767,27 @@ function submitAnswer() {
             session.correct++;
 
             session.streak++;
-			
-			if (
-				session.streak > session.bestStreak
-			) {
-				session.bestStreak = session.streak;
-			}
+
+            if (
+                session.streak > session.bestStreak
+            ) {
+                session.bestStreak = session.streak;
+            }
+
+            // Adaptive Rating Increase
+            if (
+                session.difficulty ===
+                "adaptive"
+            ) {
+                session.skillRating =
+                    Math.min(
+                        100,
+                        session.skillRating + 3
+                    );
+
+                updateAdaptiveDifficulty();
+                updateAdaptiveStatus();
+            }
 
             document.getElementById(
                 "feedback"
@@ -741,6 +797,21 @@ function submitAnswer() {
             session.incorrect++;
 
             session.streak = 0;
+
+            // Adaptive Rating Decrease
+            if (
+                session.difficulty ===
+                "adaptive"
+            ) {
+                session.skillRating =
+                    Math.max(
+                        0,
+                        session.skillRating - 5
+                    );
+
+                updateAdaptiveDifficulty();
+                updateAdaptiveStatus();
+            }
 
             document.getElementById(
                 "feedback"
@@ -860,6 +931,38 @@ function startSession() {
             "difficultySelect"
         ).value;
 
+    if (
+        session.difficulty ===
+        "custom"
+    ) {
+
+        const hasOperation =
+            document.getElementById(
+                "opAdd"
+            ).checked ||
+
+            document.getElementById(
+                "opSubtract"
+            ).checked ||
+
+            document.getElementById(
+                "opMultiply"
+            ).checked ||
+
+            document.getElementById(
+                "opDivide"
+            ).checked;
+
+        if (!hasOperation) {
+
+            alert(
+                "Please select at least one operation."
+            );
+
+            return;
+        }
+    }
+
     applyDifficultySettings();
     
     const problemCount =
@@ -948,6 +1051,7 @@ session.totalProblems =
     session.correct = 0;
     session.incorrect = 0;
     session.streak = 0;
+    session.skillRating = 50;
     session.bestStreak = 0;
     session.history = [];
     session.questionResults = [];
@@ -962,6 +1066,7 @@ session.totalProblems =
 
     updateProgressBar();
     updateDashboard();
+    updateAdaptiveStatus();
     generateProblem();
 }
 
@@ -1059,7 +1164,7 @@ function applyDifficultySettings() {
 
         case "easy":
 
-            session.maxFractionValue = 10;
+            session.maxFractionValue = 5;
             session.maxTerms = 2;
 
             session.operations =
@@ -1069,7 +1174,7 @@ function applyDifficultySettings() {
 
         case "medium":
 
-            session.maxFractionValue = 20;
+            session.maxFractionValue = 10;
             session.maxTerms = 3;
 
             session.operations =
@@ -1079,7 +1184,7 @@ function applyDifficultySettings() {
 
         case "hard":
 
-            session.maxFractionValue = 50;
+            session.maxFractionValue = 20;
             session.maxTerms = 5;
 
             session.operations =
@@ -1090,7 +1195,7 @@ function applyDifficultySettings() {
         case "adaptive":
 
             session.maxFractionValue =
-                20;
+                10;
 
             session.maxTerms =
                 2;
@@ -1100,7 +1205,7 @@ function applyDifficultySettings() {
         case "custom":
 
             session.maxFractionValue =
-                50;
+                20;
 
             session.maxTerms =
                 Number(
@@ -1109,8 +1214,42 @@ function applyDifficultySettings() {
                     ).value
                 );
 
+            session.operations = [];
+
+            if (
+                document.getElementById(
+                    "opAdd"
+                ).checked
+            ) {
+                session.operations.push("+");
+            }
+
+            if (
+                document.getElementById(
+                    "opSubtract"
+                ).checked
+            ) {
+                session.operations.push("-");
+            }
+
+            if (
+                document.getElementById(
+                    "opMultiply"
+                ).checked
+            ) {
+                session.operations.push("*");
+            }
+
+            if (
+                document.getElementById(
+                    "opDivide"
+                ).checked
+            ) {
+                session.operations.push("/");
+            }
+
             break;
-    }
+        }
 }
 
 // Difficulty Visibility
@@ -1137,6 +1276,110 @@ function updateDifficultyVisibility() {
         isCustom
             ? "block"
             : "none";
+}
+
+function updateAdaptiveDifficulty() {
+
+    if (
+        session.difficulty !==
+        "adaptive"
+    ) {
+        return;
+    }
+
+    if (
+        session.skillRating <= 25
+    ) {
+        session.maxFractionValue = 5;
+        session.maxTerms = 2;
+        session.operations =
+            ["+", "-"];
+    }
+    else if (
+        session.skillRating <= 50
+    ) {
+        session.maxFractionValue = 10;
+        session.maxTerms = 3;
+        session.operations =
+            ["+", "-", "*"];
+    }
+    else if (
+        session.skillRating <= 75
+    ) {
+        session.maxFractionValue = 20;
+        session.maxTerms = 5;
+        session.operations =
+            ["+", "-", "*", "/"];
+    }
+    else {
+        session.maxFractionValue = 20;
+        session.maxTerms = 6;
+        session.operations =
+            ["+", "-", "*", "/"];
+    }
+}
+
+function validateCustomSettings() {
+
+    const startButton =
+        document.getElementById(
+            "startBtn"
+        );
+
+    const message =
+        document.getElementById(
+            "customValidationMessage"
+        );
+
+    if (
+        document.getElementById(
+            "difficultySelect"
+        ).value !== "custom"
+    ) {
+
+        startButton.disabled =
+            false;
+
+        message.textContent =
+            "";
+
+        return;
+    }
+
+    const hasOperation =
+        document.getElementById(
+            "opAdd"
+        ).checked ||
+
+        document.getElementById(
+            "opSubtract"
+        ).checked ||
+
+        document.getElementById(
+            "opMultiply"
+        ).checked ||
+
+        document.getElementById(
+            "opDivide"
+        ).checked;
+
+    if (!hasOperation) {
+
+        startButton.disabled =
+            true;
+
+        message.textContent =
+            "Select at least one operation.";
+
+    }
+    else {
+
+        startButton.disabled =
+            false;
+
+        message.textContent =
+            "";
+    }
 }
 
 // =====================================================
@@ -1231,7 +1474,10 @@ document
     )
     .addEventListener(
         "change",
-        updateSettingsSummary
+        () => {
+            updateSettingsSummary();
+            validateCustomSettings();
+        }
     );
 
 document
@@ -1240,7 +1486,10 @@ document
     )
     .addEventListener(
         "change",
-        updateSettingsSummary
+        () => {
+            updateSettingsSummary();
+            validateCustomSettings();
+        }
     );
 
 document
@@ -1249,7 +1498,10 @@ document
     )
     .addEventListener(
         "change",
-        updateSettingsSummary
+        () => {
+            updateSettingsSummary();
+            validateCustomSettings();
+        }
     );
 
 document
@@ -1258,7 +1510,10 @@ document
     )
     .addEventListener(
         "change",
-        updateSettingsSummary
+        () => {
+            updateSettingsSummary();
+            validateCustomSettings();
+        }
     );
 
 document
@@ -1270,6 +1525,7 @@ document
         () => {
             updateDifficultyVisibility();
             updateSettingsSummary();
+            validateCustomSettings();
         }
     );
 
@@ -1287,6 +1543,7 @@ updateDashboard();
 updateQuestionCountPreview();
 updateSettingsSummary();
 updateDifficultyVisibility();
+validateCustomSettings();
 
 document.getElementById(
     "answerInput"

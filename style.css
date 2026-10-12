@@ -386,3 +386,20 @@ button {
 #questionArea {
     display: none;
 }
+
+.adaptive-status {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #444;
+}
+
+.validation-message {
+    min-height: 20px;
+    margin-top: 10px;
+
+    color: #d32f2f;
+    font-weight: bold;
+
+    text-align: center;
+}
