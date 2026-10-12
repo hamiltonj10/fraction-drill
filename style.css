@@ -403,3 +403,27 @@ button {
 
     text-align: center;
 }
+
+/* =====================================
+   Feedback Messages
+   ===================================== */
+
+.feedback {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.correct-feedback {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #81c784;
+}
+
+.incorrect-feedback {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #e57373;
+}

@@ -791,8 +791,13 @@ function submitAnswer() {
 
             document.getElementById(
                 "feedback"
-            ).textContent =
-                "Correct!";
+            ).className =
+                "feedback correct-feedback";
+
+            document.getElementById(
+                "feedback"
+            ).innerHTML =
+                "✅ Correct!";
         } else {
             session.incorrect++;
 
@@ -815,8 +820,15 @@ function submitAnswer() {
 
             document.getElementById(
                 "feedback"
-            ).textContent =
-                `Incorrect. Answer: ${currentAnswer}`;
+            ).className =
+                "feedback incorrect-feedback";
+
+            document.getElementById(
+                "feedback"
+            ).innerHTML =
+                `❌ Incorrect<br>
+                Correct Answer:
+                ${fractionHTML(currentAnswer)}`;
         }
 
        let expression =
@@ -1016,11 +1028,6 @@ session.totalProblems =
         "inline-block";
 
     document.getElementById(
-        "feedback"
-    ).style.display =
-        "block";
-
-    document.getElementById(
         "startBtn"
     ).style.display =
         "none";
@@ -1064,6 +1071,15 @@ session.totalProblems =
         "feedback"
     ).textContent = "";
 
+    document.getElementById(
+        "feedback"
+    ).className = "";
+
+    document.getElementById(
+        "feedback"
+    ).style.display =
+        "block";
+
     updateProgressBar();
     updateDashboard();
     updateAdaptiveStatus();
@@ -1090,6 +1106,15 @@ function resetToStartScreen() {
     document.getElementById(
         "feedback"
     ).textContent = "";
+
+    document.getElementById(
+        "feedback"
+    ).className = "";
+
+    document.getElementById(
+        "feedback"
+    ).style.display =
+        "block";
 
     document.getElementById(
         "answerInput"
@@ -1145,11 +1170,6 @@ function resetToStartScreen() {
         "resetBtn"
     ).style.display =
         "inline-block";
-
-    document.getElementById(
-        "feedback"
-    ).style.display =
-        "block";
 
     updateProgressBar();
     updateDashboard();
